@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<style>
+    body {
+        height: 100vh;
+       
+        
+    }
+    /* #image{ */
+        /* object-position: left; */
+    /* } */
+
+    /* .img-container{
+        height: 1920px;
+    }
+    .img-container img{
+       width: 100%;
+    } */
+</style>
+
+<body>
+
+
+    <div class="img-container">
+
+        <img src="../asset/images/6.png" alt="Image 4" class="image" id="image">
+    </div>
+
+
+    <script>
+
+
+        //For single images 
+        // function scrollToImage(imageNumber) {
+        //     var images = document.querySelectorAll('.image');
+        //     if (imageNumber >= 1 && imageNumber <= images.length) {
+        //         var totalImages = images.length;
+        //         var windowWidth = window.innerWidth || document.documentElement.clientWidth;
+        //         var documentWidth = Math.max(
+        //             document.body.scrollWidth,
+        //             document.body.offsetWidth,
+        //             document.documentElement.clientWidth,
+        //             document.documentElement.scrollWidth,
+        //             document.documentElement.offsetWidth
+        //         );
+
+        //         var imageWidth = images[0].width; // Assuming all images have the same width
+        //         var containerWidth = imageWidth * totalImages;
+
+        //         var maxScrollPosition = containerWidth - windowWidth;
+        //         var scrollPercentage = (imageNumber - 1) / (totalImages - 1) * 100;
+        //         var scrollPosition = (maxScrollPosition * scrollPercentage) / 100;
+
+        //         // Scroll horizontally to the calculated position
+        //         window.scrollTo({
+        //             left: scrollPosition,
+        //             behavior: 'smooth'
+        //         });
+        //     }
+        // }
+
+        var isAnimating = false;
+        var animationStartTime = null;
+        var currentScrollPosition = 0;
+        var targetScrollPosition = 0;
+        var animationDuration = 7500; // 10 seconds
+        var imageChangeDelay = 0; // 2 seconds between images
+
+        function scrollToImage(imageNumber) {
+            var images = document.querySelectorAll('.image');
+            if (imageNumber >= 1 && imageNumber <= images.length) {
+                var totalImages = images.length;
+                var windowWidth = window.innerWidth || document.documentElement.clientWidth;
+                var documentWidth = Math.max(
+                    document.body.scrollWidth,
+                    document.body.offsetWidth,
+                    document.documentElement.clientWidth,
+                    document.documentElement.scrollWidth,
+                    document.documentElement.offsetWidth
+                );
+
+                var imageWidth = images[0].width; // Assuming all images have the same width
+                var containerWidth = imageWidth * totalImages;
+
+                var maxScrollPosition = containerWidth - windowWidth;
+                var scrollPercentage = (imageNumber - 1) / (totalImages - 1) * 100;
+                targetScrollPosition = (maxScrollPosition * scrollPercentage) / 100;
+
+                if (!isAnimating) {
+                    isAnimating = true;
+                    currentScrollPosition = window.scrollX || window.pageXOffset;
+
+                    // Start the animation and delay between images
+                    animateScroll();
+                }
+            }
+        }
+
+        function animateScroll() {
+            if (!animationStartTime) {
+                animationStartTime = performance.now();
+            }
+
+            var currentTime = performance.now();
+            var progress = currentTime - animationStartTime;
+            var scrollFraction = progress / animationDuration;
+
+            if (scrollFraction > 1) {
+                scrollFraction = 1;
+            }
+
+            var newScrollPosition = currentScrollPosition + (targetScrollPosition - currentScrollPosition) * scrollFraction;
+
+            // Scroll horizontally to the new position
+            window.scrollTo({
+                left: newScrollPosition,
+                behavior: 'auto' // Use 'auto' here since we are manually calculating the position
+            });
+
+            if (scrollFraction < 1) {
+                // Use requestAnimationFrame to continue the animation
+                requestAnimationFrame(animateScroll);
+            } else {
+                // Animation finished
+                isAnimating = false;
+                animationStartTime = null;
+
+                // Wait for the specified delay before allowing another scroll
+                setTimeout(function () {
+                    currentScrollPosition = newScrollPosition;
+                }, imageChangeDelay);
+            }
+        }
+
+
+
+
+
+        const socket = io();
+        var divDocument = document.getElementById("imageContainer")
+        socket.on("getdata", (percentage) => {
+
+            let childrenLength = divDocument.children.length;
+            let divwidth = divDocument.getBoundingClientRect().width * childrenLength;
+            let scrollValue = (divwidth * percentage) / 100;
+            console.log(`divWidth : ${divwidth}`);
+            console.log(`scrollValue : ${scrollValue}`);
+
+            // setTimeout(()=>{
+            //     console.log(e);
+            window.scrollTo({ left: parseInt(scrollValue), behavior: "smooth" });
+            // },1000)
+
+
+        });
+
+        socket.on("getImg", (e) => {
+            scrollToImage(e)
+        })
+
+        const imageContainer = document.getElementById("imageContainer");
+        let scrollLeft = 0;
+
+        // imageContainer.addEventListener("wheel", (event) => {
+        //     event.preventDefault();
+
+        //     // Change the scroll speed by modifying the 'event.deltaY' value
+        //     const scrollSpeed = event.deltaY * 0.7;
+        //     scrollLeft += scrollSpeed;
+
+        //     // Limit the scroll within the container's width
+        //     scrollLeft = Math.max(0, Math.min(scrollLeft, imageContainer.scrollWidth - imageContainer.clientWidth));
+
+        //     imageContainer.scrollLeft = scrollLeft;
+        // });
+        //   //  Add click event listener to slide images
+        //     imageContainer.addEventListener("click", () => {
+        //         const imageWidth = imageContainer.querySelector("img").offsetWidth;
+        //         const containerWidth = imageContainer.offsetWidth;
+        //         const maxScrollLeft = imageContainer.scrollWidth - containerWidth;
+
+        //         // Check if there is enough space to scroll to the next image
+        //         if (scrollLeft + containerWidth < maxScrollLeft) {
+        //             scrollLeft += imageWidth;
+        //             imageContainer.scrollLeft = scrollLeft;
+        //         }
+        //     })
+        var img = document.getElementById('image');
+        var width = img.clientWidth;
+        var height = img.clientHeight;
+        console.log("width", width);
+        console.log("heigth", height);
+
+
+        socket.on("getstops", (e) => {
+            console.log(e);
+        }
+        )
+
+    </script>
+
+</body>
+
+</html>
