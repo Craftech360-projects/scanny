@@ -9,63 +9,38 @@
 </head>
 <style>
     body {
+        width: 100%;
         height: 100vh;
-       
-        
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
     }
-    /* #image{ */
-        /* object-position: left; */
-    /* } */
 
-    /* .img-container{
-        height: 1920px;
+    #imageContainer {
+        /* overflow-x: scroll; */
+        white-space: nowrap;
     }
-    .img-container img{
-       width: 100%;
-    } */
+
+    .image {
+
+        display: inline-flex;
+        width: 100%;
+        height: 100vh;
+    }
 </style>
 
 <body>
-
-
-    <div class="img-container">
-
-        <img src="../asset/images/6.png" alt="Image 4" class="image" id="image">
+    <div id="imageContainer">
+        <img src="../asset/images/1.png" alt="Image 1" class="image">
+        <img src="../asset/images/2.png" alt="Image 2" class="image">
+        <img src="../asset/images/3.png" alt="Image 3" class="image">
+        <img src="../asset/images/4.png" alt="Image 4" class="image">
+        <img src="../asset/images/5.png" alt="Image 4" class="image">
+        <img src="../asset/images/5.png" alt="Image 4" class="image">
     </div>
-
-
     <script>
-
-
         //For single images 
-        // function scrollToImage(imageNumber) {
-        //     var images = document.querySelectorAll('.image');
-        //     if (imageNumber >= 1 && imageNumber <= images.length) {
-        //         var totalImages = images.length;
-        //         var windowWidth = window.innerWidth || document.documentElement.clientWidth;
-        //         var documentWidth = Math.max(
-        //             document.body.scrollWidth,
-        //             document.body.offsetWidth,
-        //             document.documentElement.clientWidth,
-        //             document.documentElement.scrollWidth,
-        //             document.documentElement.offsetWidth
-        //         );
-
-        //         var imageWidth = images[0].width; // Assuming all images have the same width
-        //         var containerWidth = imageWidth * totalImages;
-
-        //         var maxScrollPosition = containerWidth - windowWidth;
-        //         var scrollPercentage = (imageNumber - 1) / (totalImages - 1) * 100;
-        //         var scrollPosition = (maxScrollPosition * scrollPercentage) / 100;
-
-        //         // Scroll horizontally to the calculated position
-        //         window.scrollTo({
-        //             left: scrollPosition,
-        //             behavior: 'smooth'
-        //         });
-        //     }
-        // }
-
+        
         var isAnimating = false;
         var animationStartTime = null;
         var currentScrollPosition = 0;
@@ -143,6 +118,30 @@
 
 
 
+        // function scrollHorizontalToPercentage(percentage) {
+
+        //     var windowWidth = window.innerWidth || document.documentElement.clientWidth;
+        //     console.log(`window inner width : ${window.innerWidth}`);
+        //     console.log(`document ELement client width : ${document.documentElement.clientWidth}`);
+        //     console.log(`window width : ${windowWidth}`);
+        //     var documentWidth = Math.max(
+        //         document.body.scrollWidth,
+        //         document.body.offsetWidth,
+        //         document.documentElement.clientWidth,
+        //         document.documentElement.scrollWidth,
+        //         document.documentElement.offsetWidth
+        //     );
+        //     console.log(`documentWidth : ${documentWidth}`);
+        //     var scrollPosition = (percentage / 100);
+        //     console.log(`scroll Position : ${scrollPosition}`);
+
+        //     // Scroll horizontally to the calculated position
+        //     window.scrollTo({
+        //         left: scrollPosition,
+        //         behavior: 'smooth' // Optionally, you can add smooth scrolling behavior
+        //     });
+        // }
+
         const socket = io();
         var divDocument = document.getElementById("imageContainer")
         socket.on("getdata", (percentage) => {
@@ -168,41 +167,30 @@
         const imageContainer = document.getElementById("imageContainer");
         let scrollLeft = 0;
 
-        // imageContainer.addEventListener("wheel", (event) => {
-        //     event.preventDefault();
+        imageContainer.addEventListener("wheel", (event) => {
+            event.preventDefault();
 
-        //     // Change the scroll speed by modifying the 'event.deltaY' value
-        //     const scrollSpeed = event.deltaY * 0.7;
-        //     scrollLeft += scrollSpeed;
+            // Change the scroll speed by modifying the 'event.deltaY' value
+            const scrollSpeed = event.deltaY * 0.7;
+            scrollLeft += scrollSpeed;
 
-        //     // Limit the scroll within the container's width
-        //     scrollLeft = Math.max(0, Math.min(scrollLeft, imageContainer.scrollWidth - imageContainer.clientWidth));
+            // Limit the scroll within the container's width
+            scrollLeft = Math.max(0, Math.min(scrollLeft, imageContainer.scrollWidth - imageContainer.clientWidth));
 
-        //     imageContainer.scrollLeft = scrollLeft;
-        // });
-        //   //  Add click event listener to slide images
-        //     imageContainer.addEventListener("click", () => {
-        //         const imageWidth = imageContainer.querySelector("img").offsetWidth;
-        //         const containerWidth = imageContainer.offsetWidth;
-        //         const maxScrollLeft = imageContainer.scrollWidth - containerWidth;
+            imageContainer.scrollLeft = scrollLeft;
+        });
+    //   //  Add click event listener to slide images
+    //     imageContainer.addEventListener("click", () => {
+    //         const imageWidth = imageContainer.querySelector("img").offsetWidth;
+    //         const containerWidth = imageContainer.offsetWidth;
+    //         const maxScrollLeft = imageContainer.scrollWidth - containerWidth;
 
-        //         // Check if there is enough space to scroll to the next image
-        //         if (scrollLeft + containerWidth < maxScrollLeft) {
-        //             scrollLeft += imageWidth;
-        //             imageContainer.scrollLeft = scrollLeft;
-        //         }
-        //     })
-        var img = document.getElementById('image');
-        var width = img.clientWidth;
-        var height = img.clientHeight;
-        console.log("width", width);
-        console.log("heigth", height);
-
-
-        socket.on("getstops", (e) => {
-            console.log(e);
-        }
-        )
+    //         // Check if there is enough space to scroll to the next image
+    //         if (scrollLeft + containerWidth < maxScrollLeft) {
+    //             scrollLeft += imageWidth;
+    //             imageContainer.scrollLeft = scrollLeft;
+    //         }
+    //     })
 
     </script>
 

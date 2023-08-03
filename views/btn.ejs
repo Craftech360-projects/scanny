@@ -7,51 +7,86 @@
     <title>Document</title>
     <script src="/socket.io/socket.io.js"></script>
 </head>
+<style>
+    body {
+        width: 100%;
+        height: 100vh;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        background-color: black;
+    }
 
+    #btn1 {
+        height: 200px;
+        width: 200px;
+        background-color: rgb(68, 231, 68);
+        font-size: 50px;
+    }
+
+    #btn2 {
+        height: 200px;
+        width: 200px;
+        background-color: red;
+        font-size: 50px;
+    }
+
+    .buttons {
+        justify-content: center;
+        align-items: center;
+    }
+
+    #btn1:hover {
+        cursor: pointer;
+        color: white;
+        /* margin-top: 2%;
+        margin-bottom: 2%;
+        margin-left: 2%;
+        position: relative; */
+    }
+
+    #btn2:hover {
+        cursor: pointer;
+        color: white;
+        /* font-size: large; */
+    }
+
+    .scrbtn {
+        margin-top: 20px;
+    }
+
+    .o {
+        height: 50px;
+        width: 50px;
+    }
+</style>
 
 <body>
-    
-
-    <label for="stops">Enter the number of stops you need</label>
-    <input type="number" id="stops" min="1">
-    <button onclick="createButtons()">Create Stops</button>
-    <div id="btncontainer"></div>
-
-    <script>
-        const socket = io();
-        function createButtons() {
-            const stops = parseInt(document.getElementById("stops").value);
-            const btncontainer = document.getElementById("btncontainer");
-            btncontainer.innerHTML = "";
-
-            for (let i = 1; i <= stops; i++) {
-                const button = document.createElement("button");
-                button.textContent = "stop" + i;
-                btncontainer.appendChild(button);
-            }
-            console.log("stops", stops);
-            socket.emit("sendstops", stops);
-        }
-      
-    </script>
+    <div class="buttons">
 
 
-
-
-
-
+        <button type="button" id="btn1" onclick="senddata()">on</button>
+        <button type="button" id="btn2" onclick="senddata1()">off</button>
+    </div>
+    <div class="scrbtn">
+        <button type="button" class="o" onclick="sendImg('1')">1</button>
+        <button type="button" class="o" onclick="sendImg('25')">2</button>
+        <button type="button" class="o" onclick="sendImg('50')">3</button>
+        <button type="button" class="o" onclick="sendImg('75')">4</button>
+        <button type="button" class="o" onclick="sendImg('100')">5</button>
+    </div>
     <div id="imageContainer">
         <!-- Placeholder for the displayed image -->
     </div>
 
     <script>
-        // const socket = io();
-        // function senddata() {
-        //     socket.emit("on")
-        // }
-        // function senddata1() {
-        //     socket.emit("off")
-        // }
+        const socket = io();
+        function senddata() {
+            socket.emit("on")
+        }
+        function senddata1() {
+            socket.emit("off")
+        }
 
 
         function sendImg(value) {
@@ -73,7 +108,15 @@
             imageContainer.appendChild(image);
         }
     </script>
+    <script>
 
+
+
+
+
+
+
+    </script>
 
 </body>
 
