@@ -7,6 +7,7 @@ const port = 3000;
 const server = require("http").createServer(app);
 const {Server} = require('node-osc');
 const io = require("socket.io")(server);
+const fs = require('fs')
 
 const { SerialPort, ReadlineParser } = require('serialport')
 const Aport = new SerialPort({ path: "COM5", baudRate: 115200 })
