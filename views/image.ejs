@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f4f4f4;
+    }
+
+    form {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    #successMessage {
+        display: none;
+        text-align: center;
+        font-size: 18px;
+        margin-top: 20px;
+    }
+
+    #backButton {
+        display: none;
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+    #successVideo {
+        width: 300px;
+        height: 300px;
+        display: none;
+    }
+</style>
+
+<body>
+    <form id="imageUploadForm" enctype="multipart/form-data">
+        <label for="imageInput1">Image 1:</label>
+        <input type="file" id="imageInput1" accept="image/*" name="image1">
+
+        <label for="imageInput2">Image 2:</label>
+        <input type="file" id="imageInput2" accept="image/*" name="image2">
+
+        <label for="imageInput3">Image 3:</label>
+        <input type="file" id="imageInput3" accept="image/*" name="image3">
+
+        <label for="imageInput4">Image 4:</label>
+        <input type="file" id="imageInput4" accept="image/*" name="image4">
+
+        <label for="imageInput5">Image 5:</label>
+        <input type="file" id="imageInput5" accept="image/*" name="image5">
+
+        <button type="button" onclick="uploadImages()">Upload Images</button>
+    </form>
+
+    <div id="successMessage"><video src="../asset/sucess.mp4" id="successVideo" autoplay="false"></video></div>
+    <button id="backButton" onclick="goBack()">Back</button>
+
+    <script>
+        function uploadImages() {
+            let successCount = 0;
+            let errorCount = 0;
+
+            const handleResponse = (response) => {
+                if (response.ok) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
+
+                if (successCount + errorCount === 5) {
+                    if (successCount === 5) {
+                        showSuccessMessage();
+                    } else {
+                        alert(`Failed to upload ${errorCount} image(s).`);
+                    }
+                }
+            };
+
+            for (let i = 1; i <= 5; i++) {
+                const input = document.getElementById(`imageInput${i}`);
+                const formData = new FormData();
+                formData.append(`image${i}`, input.files[0]);
+
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(handleResponse)
+                .catch((error) => {
+                    console.error(error);
+                    handleResponse({ ok: false });
+                });
+            }
+        }
+
+        function showSuccessMessage() {
+            const form = document.getElementById('imageUploadForm');
+            const successMessage = document.getElementById('successMessage');
+            const backButton = document.getElementById('backButton');
+            const successVideo = document.getElementById('successVideo');
+
+            if (form && successMessage && backButton && successVideo) {
+                form.style.display = 'none';
+                successMessage.style.display = 'block';
+                backButton.style.display = 'block';
+
+                // Show the video
+                successVideo.style.display = 'block';
+                successVideo.play();
+
+                // Pause the video after 2 seconds
+                setTimeout(() => {
+                    successVideo.pause();
+                    successVideo.currentTime = 0;
+                }, 3000);
+            } else {
+                console.error('DOM elements not found.');
+            }
+        }
+
+        function goBack() {
+            const form = document.getElementById('imageUploadForm');
+            const successMessage = document.getElementById('successMessage');
+            const backButton = document.getElementById('backButton');
+            const successVideo = document.getElementById('successVideo');
+
+            if (form && successMessage && backButton && successVideo) {
+                form.style.display = 'block';
+                successMessage.style.display = 'none';
+                backButton.style.display = 'none';
+
+                // Pause and reset the video
+                successVideo.pause();
+                successVideo.currentTime = 0;
+
+                // Clear the file input values
+                for (let i = 1; i <= 5; i++) {
+                    const input = document.getElementById(`imageInput${i}`);
+                    input.value = '';
+                }
+            } else {
+                console.error('DOM elements not found.');
+            }
+        }
+    </script>
+</body>
+
+</html>

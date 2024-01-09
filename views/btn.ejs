@@ -62,12 +62,10 @@
 </style>
 
 <body>
-    <div class="buttons">
-
-
+    <!-- <div class="buttons">
         <button type="button" id="btn1" onclick="senddata()">on</button>
         <button type="button" id="btn2" onclick="senddata1()">off</button>
-    </div>
+    </div> -->
     <div class="scrbtn">
         <button type="button" class="o" onclick="sendImg('1')">1</button>
         <button type="button" class="o" onclick="sendImg('25')">2</button>
@@ -87,8 +85,6 @@
         function senddata1() {
             socket.emit("off")
         }
-
-
         function sendImg(value) {
             console.log(value);
             socket.emit('sendImg', value)
